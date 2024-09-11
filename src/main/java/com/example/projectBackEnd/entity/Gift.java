@@ -18,7 +18,13 @@ public class Gift {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column
     private String giftName;
+
+    @Column
+    private String SendingDate;
+
+    @Column
     private LocalDateTime createdAt;
 
     @Enumerated

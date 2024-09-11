@@ -13,6 +13,7 @@ public class GiftDto {
     private Long id;
     private String giftName;
     private String createdAt;
+    private String SendingDate;
     private CommonStatus commonStatus;
     private Set<Long> itemIds;
    // private Set<ItemsDto> items;

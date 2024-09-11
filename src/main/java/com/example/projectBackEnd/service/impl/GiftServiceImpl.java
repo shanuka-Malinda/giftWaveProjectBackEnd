@@ -89,6 +89,7 @@ public class GiftServiceImpl implements GiftService {
         GiftDto giftDto = new GiftDto();
         giftDto.setId(gift.getId());
         giftDto.setGiftName(gift.getGiftName());
+        giftDto.setSendingDate(gift.getSendingDate());
         giftDto.setCreatedAt(String.valueOf(gift.getCreatedAt()));
         giftDto.setCommonStatus(gift.getCommonStatus());
         giftDto.setItemIds(gift.getItems().stream()
@@ -104,9 +105,7 @@ public class GiftServiceImpl implements GiftService {
         if (CommonValidation.stringNullValidation(giftDto.getGiftName())) {
             validationList.add(CommonMsg.EMPTY_GIFT_NAME);
         }
-//        if (CommonValidation.dateNullValidation(giftDto.getCreatedAt())) {
-//            validationList.add(CommonMsg.EMPTY_GIFT_CREATION_DATE);
-//        }
+
         return validationList;
     }
 }

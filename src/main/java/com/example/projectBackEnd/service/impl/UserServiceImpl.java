@@ -4,32 +4,73 @@ import com.example.projectBackEnd.constant.CommonMsg;
 import com.example.projectBackEnd.dto.ItemsDto;
 import com.example.projectBackEnd.dto.UserDto;
 import com.example.projectBackEnd.entity.Items;
+import com.example.projectBackEnd.entity.Role;
 import com.example.projectBackEnd.entity.User;
+import com.example.projectBackEnd.repo.RoleRepo;
 import com.example.projectBackEnd.repo.UserRepo;
 import com.example.projectBackEnd.service.UserService;
+import com.example.projectBackEnd.util.CommonResponse;
 import com.example.projectBackEnd.util.CommonValidation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static org.hibernate.tool.schema.SchemaToolingLogging.LOGGER;
 
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepo userRepo) {
+    private final RoleRepo roleRepo;
+
+    @Autowired
+    public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder, RoleRepo roleRepo) {
         this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
+        this.roleRepo = roleRepo;
     }
 
 
+
+    @Override
+    public CommonResponse saveUser(UserDto userDto) {
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+            List<String> validationList = userValidation(userDto);
+            if (!validationList.isEmpty()) {
+                commonResponse.setErrorMessages(validationList);
+                return commonResponse;
+            }
+
+            User user = castUserDtoToEntity(userDto);
+            user = userRepo.save(user);
+            commonResponse.setStatus(true);
+            commonResponse.setPayload(Collections.singletonList(user));
+        } catch (Exception e) {
+            LOGGER.error("/**************** Exception in ProductService -> saveProduct()", e);
+            commonResponse.setStatus(false);
+            commonResponse.setErrorMessages(Collections.singletonList("An error occurred while saving the product."));
+        }
+        return commonResponse;
+    }
+
     private User castUserDtoToEntity(UserDto userDto){
+
+        Role role = roleRepo.findById("Customer").get();
+        Set<Role> userRoles = new HashSet<>();
+        userRoles.add(role);
+
         User user=new User();
+        user.setRole(userRoles);
         user.setUserName(userDto.getUserName());
         user.setAddress(userDto.getAddress());
-        user.setEmail(user.getEmail());
-        user.setTel(user.getTel());
-        user.setPassword(userDto.getPassword());
+        user.setEmail(userDto.getEmail());
+        user.setTel(userDto.getTel());
+        user.setImage(userDto.getImage());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         return user;
     }
     private UserDto castUserEntityToDto(User user){
@@ -49,6 +90,12 @@ public class UserServiceImpl implements UserService {
     public boolean isEmailExists(String email) {
         Optional<User> user = userRepo.findByEmail(email);
         return user.isPresent();
+    }
+
+
+
+    public String getEncodedPassword(String password) {
+        return passwordEncoder.encode(password);
     }
     private List<String> userValidation(UserDto userDto) {
         List<String> validationList = new ArrayList<>();

@@ -21,7 +21,7 @@ public class GiftController {
     }
 
     @PostMapping("/create")
-    public CommonResponse createGigt(@RequestBody GiftDto giftDto){
+    public CommonResponse createGift(@RequestBody GiftDto giftDto){
         return giftService.createGift(giftDto);
     }
     @GetMapping("/getAll")
