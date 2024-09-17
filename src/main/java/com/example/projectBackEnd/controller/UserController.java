@@ -32,4 +32,6 @@ public class UserController {
     public boolean checkEmail(@RequestParam String email) {
         return userService.isEmailExists(email);
     }
+
+
 }

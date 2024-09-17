@@ -21,5 +21,6 @@ public class CommonMsg {
     public static final String EMPTY_PRICE = "Empty price";
     public static final String EMPTY_GIFT_NAME="Empty gift name";
     public static final String EMPTY_GIFT_CREATION_DATE="Empty gift create date";
-    public static final String USERNAME_IS_ALREADY_EXITED ="Username is already exited !" ;
+    public static final String USERNAME_IS_ALREADY_EXITED ="Username is already used !" ;
+    public static final String EMAIL_IS_EXITED ="E-mail is already used" ;
 }

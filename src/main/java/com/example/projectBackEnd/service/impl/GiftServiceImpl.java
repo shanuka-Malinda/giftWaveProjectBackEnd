@@ -5,8 +5,10 @@ import com.example.projectBackEnd.constant.CommonStatus;
 import com.example.projectBackEnd.dto.GiftDto;
 import com.example.projectBackEnd.entity.Gift;
 import com.example.projectBackEnd.entity.Items;
+import com.example.projectBackEnd.entity.User;
 import com.example.projectBackEnd.repo.GiftRepo;
 import com.example.projectBackEnd.repo.ItemsRepo;
+import com.example.projectBackEnd.repo.UserRepo;
 import com.example.projectBackEnd.service.GiftService;
 import com.example.projectBackEnd.util.CommonResponse;
 import com.example.projectBackEnd.util.CommonValidation;
@@ -27,10 +29,13 @@ public class GiftServiceImpl implements GiftService {
     private final GiftRepo giftRepo;
     private final ItemsRepo itemsRepo;
 
+    private final UserRepo userRepo;
+
     @Autowired
-    public GiftServiceImpl(GiftRepo giftRepo, ItemsRepo itemsRepo) {
+    public GiftServiceImpl(GiftRepo giftRepo, ItemsRepo itemsRepo, UserRepo userRepo) {
         this.giftRepo = giftRepo;
         this.itemsRepo = itemsRepo;
+        this.userRepo = userRepo;
     }
 
     @Override
@@ -76,12 +81,17 @@ public class GiftServiceImpl implements GiftService {
         gift.setGiftName(giftDto.getGiftName());
         gift.setCreatedAt(LocalDateTime.now());
         gift.setCommonStatus(giftDto.getCommonStatus());
-
+        gift.setUserId(giftDto.getUserId());
         Set<Items> items = giftDto.getItemIds().stream()
                 .map(itemId -> itemsRepo.findById(itemId)
                         .orElseThrow(() -> new RuntimeException("Item not found")))
                 .collect(Collectors.toSet());
         gift.setItems(items);
+
+//        User user = userRepo.findById(giftDto.getUserId())
+//                .orElseThrow(() -> new RuntimeException("User not found with ID: " + giftDto.getUserId()));
+//
+//        gift.setUser(user);
 
         return gift;
     }
@@ -92,6 +102,7 @@ public class GiftServiceImpl implements GiftService {
         giftDto.setSendingDate(gift.getSendingDate());
         giftDto.setCreatedAt(String.valueOf(gift.getCreatedAt()));
         giftDto.setCommonStatus(gift.getCommonStatus());
+        giftDto.setUserId(gift.getUserId());
         giftDto.setItemIds(gift.getItems().stream()
                 .map(Items::getId)
                 .collect(Collectors.toSet()));

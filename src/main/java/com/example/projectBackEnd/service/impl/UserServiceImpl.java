@@ -114,6 +114,9 @@ public class UserServiceImpl implements UserService {
         if (CommonValidation.stringNullValidation(userDto.getEmail())) {
             validationList.add(CommonMsg.EMPTY_EMAIL);
         }
+        if(isEmailExists(userDto.getEmail())){
+            validationList.add(CommonMsg.EMAIL_IS_EXITED);
+        }
         if (CommonValidation.stringNullValidation(userDto.getTel())) {
             validationList.add(CommonMsg.EMPTY_CONTACT_NUMBER);
         }

@@ -41,10 +41,12 @@ public class WebSecurityConfiguration  extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(
 
                         "/api/user/register",
+                        "/api/user/check-username",
+                        "/api/user/check-email",
                         "/login",
                         "/api/items/getAll",
                         "/api/items/by-ids",
-                          "/swagger-ui.html"
+                        "/api/payments/create-payment-intent"
                 ).permitAll()
                 .antMatchers(HttpHeaders.ALLOW).permitAll()
                 .anyRequest().authenticated()

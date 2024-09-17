@@ -16,5 +16,5 @@ public class GiftDto {
     private String SendingDate;
     private CommonStatus commonStatus;
     private Set<Long> itemIds;
-   // private Set<ItemsDto> items;
+    private String userId;
 }
