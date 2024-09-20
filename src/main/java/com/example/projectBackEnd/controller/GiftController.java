@@ -12,6 +12,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/gift")
+//@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin
 public class GiftController {
     private final GiftService giftService;
 
@@ -31,5 +33,14 @@ public class GiftController {
     @GetMapping("/get")
     public List<Gift> get(){
         return giftService.getGift();
+    }
+    @PostMapping("/addNew")
+    public CommonResponse addNewGift(@RequestBody GiftDto giftDto){
+        return giftService.createGift(giftDto);
+    }
+
+    @PutMapping("/paid")
+    public CommonResponse updatePaymentStatus(@RequestBody GiftDto giftDto){
+        return giftService.updatePaymentStatus(giftDto);
     }
 }

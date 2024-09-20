@@ -1,6 +1,7 @@
 package com.example.projectBackEnd.entity;
 
 import com.example.projectBackEnd.constant.CommonStatus;
+import com.example.projectBackEnd.constant.PaymentStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,13 +24,19 @@ public class Gift {
     private String giftName;
 
     @Column
-    private String SendingDate;
+    private String sendingDate;
 
     @Column
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     @Column
     private String totalPrice;
+
+    @Column
+    private String recieverAddress;
+
+    @Column
+    private String zip;
 
     @Enumerated
     private CommonStatus commonStatus;
@@ -42,8 +49,10 @@ public class Gift {
     )
     private Set<Items> items;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id")
-//    private User user;
+
+    @Column
     private String userId;
+
+    @Enumerated
+    private PaymentStatus paymentStatus;
 }

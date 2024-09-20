@@ -2,6 +2,7 @@ package com.example.projectBackEnd.service.impl;
 
 import com.example.projectBackEnd.constant.CommonMsg;
 import com.example.projectBackEnd.constant.CommonStatus;
+import com.example.projectBackEnd.constant.PaymentStatus;
 import com.example.projectBackEnd.dto.GiftDto;
 import com.example.projectBackEnd.entity.Gift;
 import com.example.projectBackEnd.entity.Items;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.hibernate.tool.schema.SchemaToolingLogging.LOGGER;
+
 @Service
 public class GiftServiceImpl implements GiftService {
 
@@ -42,10 +45,15 @@ public class GiftServiceImpl implements GiftService {
     public CommonResponse createGift(GiftDto giftDto) {
         CommonResponse commonResponse = new CommonResponse();
         try {
+            List<String> validationList = giftValidation(giftDto);
+            if (!validationList.isEmpty()){
+                commonResponse.setErrorMessages(validationList);
+                return commonResponse;
+            }
             Gift gift = castGiftDtoToEntity(giftDto);
             gift = giftRepo.save(gift);
             commonResponse.setStatus(true);
-            commonResponse.setPayload(Collections.singletonList(gift));
+            commonResponse.setPayload(Collections.singletonList(gift.getId()));
         } catch (Exception e) {
             commonResponse.setStatus(false);
             commonResponse.setErrorMessages(Collections.singletonList("An error occurred while saving the gift."));
@@ -76,22 +84,49 @@ public class GiftServiceImpl implements GiftService {
         return giftRepo.findAll();
     }
 
+    @Override
+    public CommonResponse updatePaymentStatus(GiftDto giftDto) {
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+            if (giftDto.getId() == null) {
+                commonResponse.setStatus(false);
+                commonResponse.setErrorMessages(Collections.singletonList("Gift ID is required for update."));
+                return commonResponse;
+            }
+
+            Gift existingGiftBox = giftRepo.findById(Long.valueOf(giftDto.getId()))
+                    .orElseThrow(() -> new RuntimeException("Gift Box not found"));
+
+            existingGiftBox.setPaymentStatus(giftDto.getPaymentStatus());
+
+
+            giftRepo.save(existingGiftBox);
+            commonResponse.setStatus(true);
+            commonResponse.setPayload(Collections.singletonList("Payment SuccessFully"));
+        } catch (Exception e) {
+            LOGGER.error("/**************** Exception in GiftService -> updateProduct()", e);
+            commonResponse.setStatus(false);
+            commonResponse.setErrorMessages(Collections.singletonList("An error occurred while updating the gift payment."));
+        }
+        return commonResponse;
+    }
+
     private Gift castGiftDtoToEntity(GiftDto giftDto) {
         Gift gift = new Gift();
         gift.setGiftName(giftDto.getGiftName());
-        gift.setCreatedAt(LocalDateTime.now());
+        gift.setCreatedAt(giftDto.getCreatedAt());
         gift.setCommonStatus(giftDto.getCommonStatus());
         gift.setUserId(giftDto.getUserId());
+        gift.setRecieverAddress(giftDto.getRecieverAddress());
+        gift.setSendingDate(giftDto.getSendingDate());
+        gift.setZip(giftDto.getZip());
+        gift.setTotalPrice(giftDto.getTotalPrice());
+        gift.setPaymentStatus(PaymentStatus.NOT_PAID);
         Set<Items> items = giftDto.getItemIds().stream()
                 .map(itemId -> itemsRepo.findById(itemId)
                         .orElseThrow(() -> new RuntimeException("Item not found")))
                 .collect(Collectors.toSet());
         gift.setItems(items);
-
-//        User user = userRepo.findById(giftDto.getUserId())
-//                .orElseThrow(() -> new RuntimeException("User not found with ID: " + giftDto.getUserId()));
-//
-//        gift.setUser(user);
 
         return gift;
     }
@@ -100,9 +135,11 @@ public class GiftServiceImpl implements GiftService {
         giftDto.setId(gift.getId());
         giftDto.setGiftName(gift.getGiftName());
         giftDto.setSendingDate(gift.getSendingDate());
-        giftDto.setCreatedAt(String.valueOf(gift.getCreatedAt()));
+        giftDto.setCreatedAt(gift.getCreatedAt());
         giftDto.setCommonStatus(gift.getCommonStatus());
         giftDto.setUserId(gift.getUserId());
+        giftDto.setRecieverAddress(gift.getRecieverAddress());
+        giftDto.setZip(gift.getZip());
         giftDto.setItemIds(gift.getItems().stream()
                 .map(Items::getId)
                 .collect(Collectors.toSet()));

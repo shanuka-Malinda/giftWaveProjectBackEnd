@@ -46,7 +46,11 @@ public class WebSecurityConfiguration  extends WebSecurityConfigurerAdapter {
                         "/login",
                         "/api/items/getAll",
                         "/api/items/by-ids",
-                        "/api/payments/create-payment-intent"
+                        "/api/payments/create-payment-intent",
+                         "/api/items/add",
+                         "/api/gift/addNew",
+                         "/api/gift/create",
+                          "/api/gift/paid"
                 ).permitAll()
                 .antMatchers(HttpHeaders.ALLOW).permitAll()
                 .anyRequest().authenticated()

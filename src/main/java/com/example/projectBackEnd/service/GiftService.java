@@ -11,4 +11,6 @@ public interface GiftService {
     CommonResponse getAllGift();
 
     public List<Gift> getGift();
+
+    CommonResponse updatePaymentStatus(GiftDto giftDto);
 }
