@@ -33,5 +33,9 @@ public class UserController {
         return userService.isEmailExists(email);
     }
 
+    @GetMapping("/getAll")
+    public CommonResponse getAll(){
+        return userService.getAll();
+    }
 
 }

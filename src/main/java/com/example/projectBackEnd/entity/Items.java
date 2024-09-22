@@ -29,7 +29,6 @@ public class Items {
     @Column
     private String Category;
 
-
     @Column( columnDefinition = "LONGTEXT")
     private String image;
 

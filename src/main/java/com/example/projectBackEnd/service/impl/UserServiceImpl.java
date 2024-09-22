@@ -1,6 +1,7 @@
 package com.example.projectBackEnd.service.impl;
 
 import com.example.projectBackEnd.constant.CommonMsg;
+import com.example.projectBackEnd.constant.CommonStatus;
 import com.example.projectBackEnd.dto.ItemsDto;
 import com.example.projectBackEnd.dto.UserDto;
 import com.example.projectBackEnd.entity.Items;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.hibernate.tool.schema.SchemaToolingLogging.LOGGER;
 
@@ -57,6 +59,28 @@ public class UserServiceImpl implements UserService {
         return commonResponse;
     }
 
+    @Override
+    public CommonResponse getAll() {
+
+            CommonResponse commonResponse = new CommonResponse();
+            try {
+                List<Object> userDtoList = userRepo.findAll().stream()
+                        .filter(user -> user.getCommonStatus() == CommonStatus.ACTIVE)  // Assuming you have CommonStatus for Users
+                        .map(this::castUserEntityToDto)  // Cast User entities to DTOs (you'll implement this method)
+                        .collect(Collectors.toList());
+
+                commonResponse.setStatus(true);
+                commonResponse.setPayload(userDtoList);  // Directly set the list of DTOs in the payload
+            } catch (Exception e) {
+                LOGGER.error("/**************** Exception in UserService -> getAllUsers()", e);
+                commonResponse.setStatus(false);
+                commonResponse.setErrorMessages(Collections.singletonList("An error occurred while fetching users."));
+            }
+            return commonResponse;
+
+
+    }
+
     private User castUserDtoToEntity(UserDto userDto){
 
         Role role = roleRepo.findById("Customer").get();
@@ -70,6 +94,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDto.getEmail());
         user.setTel(userDto.getTel());
         user.setImage(userDto.getImage());
+        user.setCommonStatus(CommonStatus.ACTIVE);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         return user;
     }

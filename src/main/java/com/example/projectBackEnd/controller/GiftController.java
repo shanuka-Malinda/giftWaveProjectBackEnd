@@ -43,4 +43,8 @@ public class GiftController {
     public CommonResponse updatePaymentStatus(@RequestBody GiftDto giftDto){
         return giftService.updatePaymentStatus(giftDto);
     }
+    @GetMapping("/getAllByUser/{userId}")
+    public CommonResponse getAllGiftByUserId(@PathVariable String userId){
+        return giftService.getAllGiftByUserId(userId);
+    }
 }

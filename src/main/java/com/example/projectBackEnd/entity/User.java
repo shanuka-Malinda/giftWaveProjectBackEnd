@@ -1,5 +1,6 @@
 package com.example.projectBackEnd.entity;
 
+import com.example.projectBackEnd.constant.CommonStatus;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,6 +48,6 @@ public class User {
     @Column
     private String password;
 
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-//    private List<Gift> gifts;
+    @Enumerated
+    private CommonStatus commonStatus;
 }

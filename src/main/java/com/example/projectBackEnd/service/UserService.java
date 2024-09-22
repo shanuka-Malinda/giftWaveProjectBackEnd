@@ -11,4 +11,5 @@ public interface UserService {
     CommonResponse saveUser(UserDto userDto);
 
 
+    CommonResponse getAll();
 }

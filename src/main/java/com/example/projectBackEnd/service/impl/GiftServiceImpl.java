@@ -111,6 +111,34 @@ public class GiftServiceImpl implements GiftService {
         return commonResponse;
     }
 
+    @Override
+    public CommonResponse getAllGiftByUserId(String userId) {
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+            // Fetch gifts by user ID and filter only ACTIVE gifts
+            List<Gift> giftList = giftRepo.findByUserId(userId).stream()
+                    .filter(Gift -> Gift.getCommonStatus() == CommonStatus.ACTIVE)
+                    .collect(Collectors.toList());
+
+            // If gifts are found, return a success response with gift details
+            if (!giftList.isEmpty()) {
+                List<GiftDto> giftDtoList = giftList.stream()
+                        .map(this::castEntityToDto)  // Converting Gift entity to DTO
+                        .collect(Collectors.toList());
+                commonResponse.setStatus(true);
+                commonResponse.setPayload(Collections.singletonList(giftDtoList));
+            } else {
+                commonResponse.setStatus(false);
+                commonResponse.setErrorMessages(Collections.singletonList("No active gifts found for the user."));
+            }
+        } catch (Exception e) {
+            SchemaToolingLogging.LOGGER.error("/**************** Exception in GiftService -> getGiftDetailsByUserId()", e);
+            commonResponse.setStatus(false);
+            commonResponse.setErrorMessages(Collections.singletonList("An error occurred while fetching gifts for the user."));
+        }
+        return commonResponse;
+    }
+
     private Gift castGiftDtoToEntity(GiftDto giftDto) {
         Gift gift = new Gift();
         gift.setGiftName(giftDto.getGiftName());
@@ -140,6 +168,8 @@ public class GiftServiceImpl implements GiftService {
         giftDto.setUserId(gift.getUserId());
         giftDto.setRecieverAddress(gift.getRecieverAddress());
         giftDto.setZip(gift.getZip());
+        giftDto.setPaymentStatus(gift.getPaymentStatus());
+        giftDto.setTotalPrice(gift.getTotalPrice());
         giftDto.setItemIds(gift.getItems().stream()
                 .map(Items::getId)
                 .collect(Collectors.toSet()));

@@ -13,4 +13,6 @@ public interface GiftService {
     public List<Gift> getGift();
 
     CommonResponse updatePaymentStatus(GiftDto giftDto);
+
+    CommonResponse getAllGiftByUserId(String userId);
 }
