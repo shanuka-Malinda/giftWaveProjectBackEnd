@@ -143,6 +143,11 @@ public class ItemsServiceImpl implements ItemService {
         return commonResponse;
     }
 
+    @Override
+    public List<Items> searchByName(String name) {
+        return itemsRepo.findByNameContainingIgnoreCase(name);
+    }
+
     private Items castItemsDtoToEntity(ItemsDto itemsDto){
          Items items=new Items();
          items.setName(itemsDto.getName());

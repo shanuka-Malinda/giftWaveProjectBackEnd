@@ -52,7 +52,8 @@ public class WebSecurityConfiguration  extends WebSecurityConfigurerAdapter {
                          "/api/gift/create",
                           "/api/gift/paid",
                 "/api/gift/getAllByUser/{{userId}}",
-                "/api/user/getAll"
+                "/api/user/getAll",
+                "/api/items/search"
                 ).permitAll()
                 .antMatchers(HttpHeaders.ALLOW).permitAll()
                 .anyRequest().authenticated()

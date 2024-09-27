@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
         userDto.setId(String.valueOf(user.getId()));
         userDto.setAddress(user.getAddress());
         userDto.setTel(user.getTel());
-        userDto.setImage(userDto.getImage());
+        userDto.setImage(user.getImage());
         return userDto;
     }
 

@@ -1,6 +1,7 @@
 package com.example.projectBackEnd.controller;
 
 import com.example.projectBackEnd.dto.ItemsDto;
+import com.example.projectBackEnd.entity.Items;
 import com.example.projectBackEnd.service.ItemService;
 import com.example.projectBackEnd.util.CommonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,4 +42,8 @@ public class ItemsController {
         return itemService.getItemsByIds(itemIds);
     }
 
+    @GetMapping("/search")
+    public List<Items> searchByName(@RequestParam String name) {
+        return itemService.searchByName(name);
+    }
 }
