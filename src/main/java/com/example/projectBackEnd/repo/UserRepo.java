@@ -17,5 +17,5 @@ public interface UserRepo extends JpaRepository<User,Long> {
     @Query(value = "SELECT * FROM user WHERE user_name = ?1", nativeQuery = true)
     Optional<User> getAllById(String userName);
 
-
+    long count();
 }

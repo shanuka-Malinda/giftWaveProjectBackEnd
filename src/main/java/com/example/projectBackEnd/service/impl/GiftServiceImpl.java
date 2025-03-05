@@ -66,7 +66,40 @@ public class GiftServiceImpl implements GiftService {
         CommonResponse commonResponse = new CommonResponse();
         try {
             List<Object> giftDtoList = giftRepo.findAll().stream()
-                    .filter(Gift -> Gift.getCommonStatus() == CommonStatus.ACTIVE)
+                    .filter(Gift -> Gift.getCommonStatus() == CommonStatus.ACTIVE && Gift.getPaymentStatus()==PaymentStatus.PAID)
+                    .map(this::castEntityToDto)
+                    .collect(Collectors.toList());
+            commonResponse.setStatus(true);
+            commonResponse.setPayload(giftDtoList);  // Directly set the list
+        } catch (Exception e) {
+            SchemaToolingLogging.LOGGER.error("/**************** Exception in GiftService -> getAllGifts()", e);
+            commonResponse.setStatus(false);
+            commonResponse.setErrorMessages(Collections.singletonList("An error occurred while fetching gifts."));
+        }
+        return commonResponse;
+    }
+
+    public CommonResponse getAllGiftAccepted() {
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+            List<Object> giftDtoList = giftRepo.findAll().stream()
+                    .filter(Gift -> Gift.getCommonStatus() == CommonStatus.INACTIVE && Gift.getPaymentStatus()==PaymentStatus.PAID)
+                    .map(this::castEntityToDto)
+                    .collect(Collectors.toList());
+            commonResponse.setStatus(true);
+            commonResponse.setPayload(giftDtoList);  // Directly set the list
+        } catch (Exception e) {
+            SchemaToolingLogging.LOGGER.error("/**************** Exception in GiftService -> getAllGifts()", e);
+            commonResponse.setStatus(false);
+            commonResponse.setErrorMessages(Collections.singletonList("An error occurred while fetching gifts."));
+        }
+        return commonResponse;
+    }
+    public CommonResponse getAllGiftDelivered() {
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+            List<Object> giftDtoList = giftRepo.findAll().stream()
+                    .filter(Gift -> Gift.getCommonStatus() == CommonStatus.DELETED && Gift.getPaymentStatus()==PaymentStatus.PAID)
                     .map(this::castEntityToDto)
                     .collect(Collectors.toList());
             commonResponse.setStatus(true);
@@ -110,6 +143,29 @@ public class GiftServiceImpl implements GiftService {
         }
         return commonResponse;
     }
+    public CommonResponse updateCommonStatus(GiftDto giftDto) {
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+            if (giftDto.getId() == null) {
+                commonResponse.setStatus(false);
+                commonResponse.setErrorMessages(Collections.singletonList("Gift ID is required for update."));
+                return commonResponse;
+            }
+
+            Gift existingGiftBox = giftRepo.findById(Long.valueOf(giftDto.getId()))
+                    .orElseThrow(() -> new RuntimeException("Gift Box not found"));
+             existingGiftBox.setCommonStatus(giftDto.getCommonStatus());
+
+            giftRepo.save(existingGiftBox);
+            commonResponse.setStatus(true);
+            commonResponse.setPayload(Collections.singletonList("Status update SuccessFully"));
+        } catch (Exception e) {
+            LOGGER.error("/**************** Exception in GiftService -> updateStatus()", e);
+            commonResponse.setStatus(false);
+            commonResponse.setErrorMessages(Collections.singletonList("An error occurred while updating the gift Status."));
+        }
+        return commonResponse;
+    }
 
     @Override
     public CommonResponse getAllGiftByUserId(String userId) {
@@ -148,7 +204,7 @@ public class GiftServiceImpl implements GiftService {
         gift.setRecieverAddress(giftDto.getRecieverAddress());
         gift.setSendingDate(giftDto.getSendingDate());
         gift.setZip(giftDto.getZip());
-        gift.setTotalPrice(giftDto.getTotalPrice());
+        gift.setTotalPrice(Double.valueOf(giftDto.getTotalPrice()));
         gift.setPaymentStatus(PaymentStatus.NOT_PAID);
         Set<Items> items = giftDto.getItemIds().stream()
                 .map(itemId -> itemsRepo.findById(itemId)
@@ -169,7 +225,7 @@ public class GiftServiceImpl implements GiftService {
         giftDto.setRecieverAddress(gift.getRecieverAddress());
         giftDto.setZip(gift.getZip());
         giftDto.setPaymentStatus(gift.getPaymentStatus());
-        giftDto.setTotalPrice(gift.getTotalPrice());
+        giftDto.setTotalPrice(String.valueOf(gift.getTotalPrice()));
         giftDto.setItemIds(gift.getItems().stream()
                 .map(Items::getId)
                 .collect(Collectors.toSet()));

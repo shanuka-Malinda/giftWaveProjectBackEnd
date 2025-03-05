@@ -30,7 +30,7 @@ public class Gift {
     private String createdAt;
 
     @Column
-    private String totalPrice;
+    private Double totalPrice;
 
     @Column
     private String recieverAddress;

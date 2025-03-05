@@ -26,9 +26,17 @@ public class GiftController {
     public CommonResponse createGift(@RequestBody GiftDto giftDto){
         return giftService.createGift(giftDto);
     }
-    @GetMapping("/getAll")
+    @GetMapping("/getAllNew")
     public CommonResponse getAllGift(){
         return giftService.getAllGift();
+    }
+    @GetMapping("/getAllAcc")
+    public CommonResponse getAllAccepted(){
+        return giftService.getAllGiftAccepted();
+    }
+    @GetMapping("/getAllDeli")
+    public CommonResponse getAllDelivered(){
+        return giftService.getAllGiftDelivered();
     }
     @GetMapping("/get")
     public List<Gift> get(){
@@ -42,6 +50,10 @@ public class GiftController {
     @PutMapping("/paid")
     public CommonResponse updatePaymentStatus(@RequestBody GiftDto giftDto){
         return giftService.updatePaymentStatus(giftDto);
+    }
+    @PutMapping("/status")
+    public CommonResponse updateCommonStatus(@RequestBody GiftDto giftDto){
+        return giftService.updateCommonStatus(giftDto);
     }
     @GetMapping("/getAllByUser/{userId}")
     public CommonResponse getAllGiftByUserId(@PathVariable String userId){

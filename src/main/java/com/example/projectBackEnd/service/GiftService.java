@@ -9,10 +9,12 @@ import java.util.List;
 public interface GiftService {
     CommonResponse createGift(GiftDto giftDto);
     CommonResponse getAllGift();
-
+    CommonResponse getAllGiftAccepted();
+    CommonResponse getAllGiftDelivered();
     public List<Gift> getGift();
 
     CommonResponse updatePaymentStatus(GiftDto giftDto);
 
     CommonResponse getAllGiftByUserId(String userId);
+    CommonResponse updateCommonStatus(GiftDto giftDto);
 }

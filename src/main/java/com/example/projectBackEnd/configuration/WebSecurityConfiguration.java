@@ -43,17 +43,20 @@ public class WebSecurityConfiguration  extends WebSecurityConfigurerAdapter {
                         "/api/user/register",
                         "/api/user/check-username",
                         "/api/user/check-email",
+                        "/api/user/getAll",
                         "/login",
                         "/api/items/getAll",
                         "/api/items/by-ids",
-                        "/api/payments/create-payment-intent",
+                        "/api/items/search",
                          "/api/items/add",
+                        "/api/payments/create-payment-intent",
                          "/api/gift/addNew",
                          "/api/gift/create",
                           "/api/gift/paid",
-                "/api/gift/getAllByUser/{{userId}}",
-                "/api/user/getAll",
-                "/api/items/search"
+                          "/api/gift/getAllByUser/{{userId}}",
+                "/api/gift/getAllNew","/api/gift/getAllAcc","/api/gift/getAllDeli","/api/gift/status",
+               // "/api/admin/user/count",
+                        "/api/admin/**"
                 ).permitAll()
                 .antMatchers(HttpHeaders.ALLOW).permitAll()
                 .anyRequest().authenticated()
